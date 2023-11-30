@@ -1,0 +1,367 @@
+<!-- mypage.html -->
+
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/578df5cd94.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="style.css">
+
+    <title>마이 페이지</title>
+    <style>
+        /* 전체 페이지 스타일 설정 */
+        body .order {
+            font-family: 'Nanum Gothic';
+            background-color: whitesmoke;
+            margin: 0;
+            /* 외부여백 */
+            padding: 0;
+            /* 내부여백 */
+        }
+
+        /* 페이지 섹션 스타일 설정 */
+        section {
+            margin: 20px;
+        }
+
+        /* 섹션 타이틀 스타일 설정 */
+        h2 {
+            color: black;
+        }
+
+        /* 테이블 스타일 설정 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            /* 셀 테두리 합치기 */
+            margin-top: 10px;
+        }
+
+        /* 테이블 헤더와 셀 스타일 설정 */
+        th,
+        td {
+            border: 1px solid lightgray;
+            padding: 8px;
+            text-align: left;
+        }
+
+        /* 테이블 헤더 스타일 설정 */
+        th {
+            background-color: gray;
+            color: white;
+        }
+
+        /* 버튼 스타일 설정 */
+        button.order {
+            background-color: gray;
+            color: white;
+            padding: 8px;
+            border: none;
+            /* 버튼 테두리 제거 */
+            border-radius: 3px;
+            /* 버튼 모서리 둥글게 */
+            cursor: pointer;
+            /* 커서 올렸을때 포인터로 변경 */
+            text-align: center;
+        }
+
+        /* 버튼 가운데 정렬 */
+        .button {
+            text-align: center;
+        }
+
+        /* 포인트 섹션 스타일 설정 */
+        .point-section {
+            margin-top: 20px;
+        }
+
+        /* 포인트 정보 테이블 스타일 설정 */
+        .point-table {
+            width: 50%;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 페이지 헤더 -->
+    <header>
+        <div class="container">
+            <h1><a href="./main_user.html"><button>홈으로 가기</button></a></h1>
+            <div class="search">
+                <input type="search" class="searchbar">
+                <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+            <div class="menu">
+                <ul>
+                    <li>
+                        <a href="./main.html"><button><i class="fa-solid fa-door-open"></i><br>로그아웃</button></a>
+                    </li>
+                    <li>
+                        <a href="./mypage.html"><button><i class="fa-solid fa-house"></i><br>마이페이지</button></a>
+                    </li>
+                    <li>
+                        <a href="./shopping_cart.html" type="_blank"><button><i class="fa-solid fa-basket-shopping"></i><br>장바구니</button></a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 포인트 정보 표시 -->
+        <div class="point-section">
+            <h2>포인트 정보</h2>
+            <table class="point-table">
+                <thead>
+                    <tr>
+                        <th>남은 포인트</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span id="remainingPoints">500,000원</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </header>
+
+    <!-- 페이지 섹션 -->
+    <section class="order">
+        <!-- 섹션 타이틀 -->
+        <h2>주문 정보 확인</h2>
+
+        <!-- 주문 정보를 보여줄 테이블 -->
+        <table id="orderTable">
+            <thead>
+                <tr>
+                    <th>주문 번호</th>
+                    <th>상품 정보</th>
+                    <th>수량</th>
+                    <th>정가</th>
+                    <th>주문 날짜</th>
+                    <th>할인율</th>
+                    <th>할인가</th>
+                    <th>주문 취소</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 주문 정보가 들어갈 자리 -->
+            </tbody>
+        </table>
+    </section>
+
+    <!-- 주문 취소 스크립트 -->
+    <script>
+        // 페이지 로드 시 장바구니 정보 표시
+        document.addEventListener('DOMContentLoaded', function () {
+            displayCartItems();
+            displayOrders();
+            displayRemainingPoints();
+        });
+
+        // 페이지 로드 시 주문 정보 표시
+        document.addEventListener('DOMContentLoaded', function () {
+            displayOrders();
+            displayRemainingPoints();
+        });
+
+        const salesData = [
+            { id: 601, discountPercentage: 20, discountedPrice: 59780 },
+            { id: 505, discountPercentage: 10, discountedPrice: 53010 },
+            { id: 702, discountPercentage: 10, discountedPrice: 29610 },
+            { id: 801, discountPercentage: 10, discountedPrice: 25830 },
+            { id: 101, discountPercentage: 10, discountedPrice: 28800 },
+            { id: 205, discountPercentage: 30, discountedPrice: 209300 },
+            { id: 1005, discountPercentage: 10, discountedPrice: 4050 },
+            { id: 404, discountPercentage: 20, discountedPrice: 18400 },
+            { id: 302, discountPercentage: 10, discountedPrice: 7200 },
+            { id: 901, discountPercentage: 10, discountedPrice: 3420 }
+        ];
+
+        localStorage.setItem('salesData', JSON.stringify(salesData));
+
+        // 주문 정보를 보여주는 함수
+        function displayOrders() {
+            let orders = JSON.parse(localStorage.getItem('orders')) || [];
+            let orderTable = document.getElementById('orderTable');
+            let tbody = orderTable.querySelector('tbody');
+
+            // 기존 내용 초기화
+            tbody.innerHTML = '';
+
+            // 할인 정보 가져오기
+            let salesData = JSON.parse(localStorage.getItem('salesData')) || {};
+
+            // 주문을 합치기 위한 객체
+            let combinedOrders = {};
+
+            // 각 주문을 테이블에 추가
+            orders.forEach(order => {
+                // 주문의 할인 정보가 있는지 확인
+                let saleInfo = salesData.find(sale => sale.id === order.id);
+
+                if (saleInfo) {
+                    // 할인된 가격 계산
+                    let discountedPrice = saleInfo.discountedPrice;
+
+                    // 주문이 이미 있는지 확인
+                    if (combinedOrders[order.id]) {
+                        // 이미 있는 경우 수량 증가
+                        combinedOrders[order.id].quantity += order.quantity;
+                    } else {
+                        // 새로운 주문 추가
+                        combinedOrders[order.id] = {
+                            id: order.id,
+                            name: order.name,
+                            price: order.price,
+                            date: order.date,
+                            discountPercentage: saleInfo.discountPercentage,
+                            discountedPrice: discountedPrice,
+                            quantity: order.quantity
+                        };
+                    }
+                }
+            });
+
+            // 합쳐진 주문을 테이블에 추가
+            Object.values(combinedOrders).forEach(order => {
+                let row = document.createElement('tr');
+
+                row.innerHTML = `
+                    <td>${order.id}</td>
+                    <td>${order.name}</td>
+                    <td class="quantity">
+                        <input type="number" value="${order.quantity}" min="1" onchange="updateOrderQuantity(${order.id}, this.value)">
+                    </td>
+                    <td>${order.price}원</td>
+                    <td>${order.date}</td>
+                    <td>${order.discountPercentage}%</td>
+                    <td>${order.discountedPrice}원</td>
+                    <td><button class="order" onclick="cancelOrder(${order.id}, 1)">주문 취소</button></td>
+                `;
+
+                tbody.appendChild(row);
+            });
+
+            // 남은 포인트 업데이트
+            updateRemainingPoints();
+        }
+
+        // 주문 수량 업데이트 함수
+        function updateOrderQuantity(orderId, newQuantity) {
+            let orders = JSON.parse(localStorage.getItem('orders')) || [];
+            let updatedOrders = [];
+
+            // 기존 주문 목록에서 동일한 상품을 찾아서 수량을 업데이트
+            orders.forEach(order => {
+                if (order.id === orderId) {
+                    order.quantity = parseInt(newQuantity);
+                }
+                updatedOrders.push(order);
+            });
+
+            // Update the localStorage
+            localStorage.setItem('orders', JSON.stringify(updatedOrders));
+
+            // Display updated orders
+            displayOrders();
+        }
+
+        // 주문 취소 함수
+        function cancelOrder(orderId, quantityToCancel) {
+            let orders = JSON.parse(localStorage.getItem('orders')) || [];
+
+            // 주문을 찾아서 수량 감소 또는 삭제
+            let updatedOrders = [];
+            let cancelled = false; // 취소 여부를 확인하는 변수
+
+            orders.forEach(order => {
+                if (order.id === orderId && !cancelled) {
+                    if (order.quantity > 1) {
+                        // 수량이 1보다 크면 수량을 1 감소
+                        order.quantity -= quantityToCancel;
+                        updatedOrders.push(order);
+                    } else {
+                        // 수량이 1이면 해당 주문 삭제
+                        alert(`주문 번호 ${orderId}의 상품이 취소되었습니다.`);
+                        cancelled = true; // 취소되었음을 표시
+                    }
+                } else {
+                    updatedOrders.push(order);
+                }
+            });
+
+            // 변경된 주문 목록을 다시 localStorage에 저장
+            localStorage.setItem('orders', JSON.stringify(updatedOrders));
+
+            // 다시 주문 정보 표시
+            displayOrders();
+
+            // 주문 취소에 따른 포인트 복원
+            restorePoints(orderId, quantityToCancel);
+        }
+
+        // 포인트 복원 함수
+        function restorePoints(orderId, quantityCancelled) {
+            let myPagePoints = JSON.parse(localStorage.getItem('myPagePoints')) || { remainingPoints: 0 };
+
+            // 주문에 대한 정보 가져오기
+            let orders = JSON.parse(localStorage.getItem('orders')) || [];
+            let salesData = JSON.parse(localStorage.getItem('salesData')) || [];
+
+            // 취소된 주문에 대한 할인된 가격 합산
+            let cancelledOrderDiscount = orders.reduce((total, order) => {
+                if (order.id === orderId) {
+                    let saleInfo = salesData.find(sale => sale.id === order.id);
+                    if (saleInfo) {
+                        total += saleInfo.discountedPrice * quantityCancelled;
+                    }
+                }
+                return total;
+            }, 0);
+
+            // 남은 포인트에 할인된 가격 더하기
+            myPagePoints.remainingPoints += cancelledOrderDiscount;
+
+            // 변경된 포인트 정보를 다시 localStorage에 저장
+            localStorage.setItem('myPagePoints', JSON.stringify(myPagePoints));
+
+            // 남은 포인트 업데이트
+            updateRemainingPoints();
+        }
+
+        // 남은 포인트 업데이트 함수
+        function updateRemainingPoints() {
+            let remainingPointsElement = document.getElementById('remainingPoints');
+
+            // 마이페이지에서 Local Storage에서 포인트 정보를 가져와 표시
+            let myPagePoints = JSON.parse(localStorage.getItem('myPagePoints')) || { remainingPoints: 0 };
+
+            // 주문에 대한 정보 가져오기
+            let orders = JSON.parse(localStorage.getItem('orders')) || [];
+            let salesData = JSON.parse(localStorage.getItem('salesData')) || [];
+
+            // 모든 주문에 대한 할인된 가격 합산
+            let totalDiscountedAmount = orders.reduce((total, order) => {
+                let saleInfo = salesData.find(sale => sale.id === order.id);
+                if (saleInfo) {
+                    total += saleInfo.discountedPrice * order.quantity;
+                }
+                return total;
+            }, 0);
+
+            // 남은 포인트에서 할인된 가격 빼기
+            let remainingPoints = myPagePoints.remainingPoints - totalDiscountedAmount;
+
+            // 변경된 부분: 남은 포인트가 음수인 경우 0으로 처리
+            remainingPoints = Math.max(remainingPoints, 0);
+
+            // 표시 업데이트
+            remainingPointsElement.textContent = `${remainingPoints}원`;
+        }
+    </script>
+</body>
+
+</html>
